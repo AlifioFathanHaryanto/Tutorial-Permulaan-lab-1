@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg bg-light">
+    
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">{{nama}}</a>
+      <a class="navbar-brand" href="{% url 'wishlist:logout' %}">Logout</a>
+    </div>
+  </nav>
+
+<div class="mx-auto" style="text-align:center; width: 60%; margin: 0 auto;">
+    <table border="1" bgcolor="yellow">
+        <tr>
+        <th>Nama Barang</th>
+        <th>Harga Barang</th>
+        <th>Deskripsi</th>
+        </tr>
+        {% comment %} Tambahkan data di bawah baris ini {% endcomment %}
+        <script type="text/javascript">
+            $(document).ready(function(e) {
+              $.getJSON({
+                url:'json/',
+                cache:false,
+                type:"GET",
+                success: function(data){
+                  $('.list-ball').html($(data).find(".count").html());
+                  console.log($(data).find(".count").html());
+                }
+              });
+            });
+          </script>
+        <script>
+            function ajaxInfo(event){
+                event.prevenDefault()
+                $.post("/ajax/submit/"),
+                    {
+                        item_name : document.getElementById("item_name").value,
+                        item_price : document.getElementById("item_price").value,
+                        description: document.getElementById("description").value,
+                    }
+                };
+                return false;
+            
+        </script>
+        <script type ="text/javascript">
+        
+            function refresh() {
+                $.ajax({
+                    type: "GET",
+                    url: "/wishlist/json",
+                    dataType:"json",
+                    success: function(data){
+                        forData = data
+                    }
+                });
+                return forData;
+            }
+            function refresh2(){
+                var forData = refresh();
+                var tableItem = "<table> <tr> <th> Nama Barang</th>"
+                for (var k =0; k<forData.length; k++){
+                    var theItem = forData[k].fields;
+                    tableItem = tableItem + '<tr> <th>' + theItem.item_name+ '</th> <th>' + theItem.description + '</th> </tr>';
+                }
+                tableItem = tableItem + "</table>";
+                $('#lala').html(tableItem);
+            }
+        </script>
+    </table>
+
+    <h5>Sesi terakhir login: {{ last_login }}</h5>
+</div>
+{% endblock content %}
